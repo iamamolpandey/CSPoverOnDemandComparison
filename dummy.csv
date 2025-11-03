@@ -1,0 +1,10 @@
+Account ID,Region,Instance Type,Pricing Type,Operating System,Quantity(Hrs),EC2 ondemand Current Cost ($)
+70xxxxxxxx80,Oregon,t2.micro,OnDemand,Linux/UNIX,720,0.00
+70xxxxxxxx80,Mumbai,t2.micro,OnDemand,Linux/UNIX,13.992778,0.00
+70xxxxxxxx80,Mumbai,t2.micro,OnDemand,Linux/UNIX,14.005,0.00
+70xxxxxxxx80,Mumbai,t2.micro,OnDemand,Linux/UNIX,13.993055,0.00
+70xxxxxxxx80,Oregon,t3a.medium,OnDemand,Linux/UNIX,416.676389,0.00
+70xxxxxxxx80,Oregon,m6g.xlarge,OnDemand,Linux/UNIX,71.276666,0.00
+70xxxxxxxx80,Oregon,m6g.xlarge,OnDemand,Linux/UNIX,216.473056,0.00
+70xxxxxxxx80,Ireland,m6g.xlarge,OnDemand,Linux/UNIX,1.933056,0.00
+70xxxxxxxx80,Ireland,t3.medium,OnDemand,Linux/UNIX,14.005556,0.00
