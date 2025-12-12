@@ -8,7 +8,7 @@ This repo script will help you to find savings on Compute savings plan over onde
 
 
 
-# �� Windows Setup - Script 1.1
+# �� Windows Setup - Script 1.2
 ---
 ## Step 1: Install AWS CLI
 Download and install:
