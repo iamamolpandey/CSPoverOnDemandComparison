@@ -12,6 +12,7 @@ import hashlib
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from botocore.exceptions import ClientError
 from collections import deque
+import sys
 from datetime import datetime
 
 AWS_REGION = "us-east-1"
@@ -19,25 +20,37 @@ AWS_REGION = "us-east-1"
 # Region prefix mapping for Savings Plans API
 REGION_TO_USAGE_PREFIX = {
     "us-east-1": "USE1", "us-east-2": "USE2", "us-west-1": "USW1", "us-west-2": "USW2",
-    "ca-central-1": "CAN1", "sa-east-1": "SAE1",
+    "ca-central-1": "CAN1", "ca-west-1": "CAN2", "sa-east-1": "SAE1", "mx-central-1": "MXC1",
     "eu-west-1": "EU", "eu-west-2": "EU", "eu-west-3": "EU", "eu-central-1": "EU",
     "eu-north-1": "EU", "eu-south-1": "EU", "eu-south-2": "EU", "eu-central-2": "EU",
-    "ap-south-1": "APS3", "ap-south-2": "APS2", "ap-southeast-1": "APS1", 
-    "ap-southeast-2": "APS2", "ap-southeast-3": "APS3", "ap-southeast-4": "APS4",
-    "ap-northeast-1": "APN1", "ap-northeast-2": "APN2", "ap-northeast-3": "APN3",
-    "ap-east-1": "APE1", "me-south-1": "MES1", "me-central-1": "MEC1", "af-south-1": "AFS1",
+    "ap-south-1": "APS1", "ap-south-2": "APS2", "ap-southeast-1": "APS1", "ap-southeast-2": "APS2", 
+    "ap-southeast-3": "APS3", "ap-southeast-4": "APS4", "ap-southeast-5": "APS5", "ap-southeast-6": "APS6",
+    "ap-southeast-7": "APS7", "ap-northeast-1": "APN1", "ap-northeast-2": "APN2", "ap-northeast-3": "APN3",
+    "ap-east-1": "APE1", "ap-east-2": "APE2", "il-central-1": "ILC1", "me-south-1": "MES1", "me-central-1": "MEC1", "af-south-1": "AFS1",
+    # Local Zones (inherit parent region prefix)
+    "us-west-2-den-1a": "USW2",
+    "us-east-1-atl-1a": "USE1",
+    "us-east-1-bos-1a": "USE1",
+    "us-east-1-chi-1a": "USE1",
+    "us-east-1-dfw-1a": "USE1",
+    "us-east-1-iah-1a": "USE1",
+    "us-west-2-lax-1a": "USW2",
+    "us-east-1-mia-1a": "USE1",
+    "us-east-1-nyc-1a": "USE1"
 }
 
 # Region name to code mapping
 REGION_MAP = {
-    "Oregon": "us-west-2", "Mumbai": "ap-south-1", "Ireland": "eu-west-1",
+    "Oregon": "us-west-2", "Mumbai": "ap-south-1", "Hyderabad": "ap-south-2", "Ireland": "eu-west-1",
     "N. Virginia": "us-east-1", "Ohio": "us-east-2", "N. California": "us-west-1",
     "Frankfurt": "eu-central-1", "London": "eu-west-2", "Paris": "eu-west-3",
     "Stockholm": "eu-north-1", "Milan": "eu-south-1", "Spain": "eu-south-2", "Zurich": "eu-central-2",
-    "Singapore": "ap-southeast-1", "Sydney": "ap-southeast-2", "Tokyo": "ap-northeast-1",
-    "Seoul": "ap-northeast-2", "Osaka": "ap-northeast-3", "Hong Kong": "ap-east-1",
-    "Montreal": "ca-central-1", "São Paulo": "sa-east-1", "Bahrain": "me-south-1",
-    "UAE": "me-central-1", "Cape Town": "af-south-1",
+    "Singapore": "ap-southeast-1", "Sydney": "ap-southeast-2", "Jakarta": "ap-southeast-3",
+    "Melbourne": "ap-southeast-4", "Malaysia": "ap-southeast-5", "New Zealand": "ap-southeast-6",
+    "Thailand": "ap-southeast-7", "Tokyo": "ap-northeast-1",
+    "Seoul": "ap-northeast-2", "Osaka": "ap-northeast-3", "Hong Kong": "ap-east-1", "Taipei": "ap-east-2",
+    "Montreal": "ca-central-1", "Calgary": "ca-west-1", "São Paulo": "sa-east-1", "Bahrain": "me-south-1",
+    "UAE": "me-central-1", "Israel": "il-central-1", "Mexico": "mx-central-1", "Cape Town": "af-south-1",
     # Local Zones
     "Denver": "us-west-2-den-1a", "Atlanta": "us-east-1-atl-1a", "Boston": "us-east-1-bos-1a",
     "Chicago": "us-east-1-chi-1a", "Dallas": "us-east-1-dfw-1a", "Houston": "us-east-1-iah-1a",
@@ -112,6 +125,20 @@ def log_metric(key, value=1):
     with metrics_lock:
         metrics[key] += value
 
+def validate_aws_credentials():
+    """Check if AWS credentials are valid"""
+    try:
+        boto3.client('sts').get_caller_identity()
+        return True
+    except (ClientError, Exception):
+        return False
+
+def validate_csv_headers(headers):
+    """Check if CSV has required columns"""
+    required = ["Instance Type", "Region", "Operating System", "Quantity(Hrs)"]
+    missing = [col for col in required if col not in headers]
+    return missing
+
 def normalize_region(region):
     region_code = REGION_MAP.get(region, region)
     if region_code and '-' in region_code and len(region_code.split('-')) > 3:
@@ -185,9 +212,11 @@ def get_sp_rate(region, instance_type, os_type):
         return cached
     
     region_prefix = REGION_TO_USAGE_PREFIX.get(region, "USE1")
-    usage_type = f"{region_prefix}-BoxUsage:{instance_type}"
+    if region_prefix == "USE1":
+        usage_type = f"BoxUsage:{instance_type}"
+    else:
+        usage_type = f"{region_prefix}-BoxUsage:{instance_type}"
     
-    sp_limiter.acquire()
     sp_limiter.acquire()
     
     try:
@@ -206,7 +235,6 @@ def get_sp_rate(region, instance_type, os_type):
             raise Exception("No SP offerings found")
         
         offering_id = resp1['searchResults'][0]['offeringId']
-        
         # Get rates
         resp2 = client.describe_savings_plans_offering_rates(
             savingsPlanOfferingIds=[offering_id],
@@ -273,20 +301,50 @@ def process_row(row_data, row_idx):
 def process_csv(input_file, output_file="output.csv"):
     """Main processing function with multithreading"""
     print("="*70)
-    print("AWS SAVINGS PLANS CALCULATOR v1.1")
+    print("AWS SAVINGS PLANS CALCULATOR v1.2")
     print("="*70)
+    
+    # 1. Validate AWS Credentials
+    print("Checking AWS credentials...", end=" ")
+    if not validate_aws_credentials():
+        print("FAILED")
+        print("-"*70)
+        print("ERROR: Unable to locate valid AWS credentials.")
+        print("RECOMMENDATION: Run 'aws configure' to set up your credentials.")
+        print("-"*70)
+        sys.exit(1)
+    print("OK")
+
     print(f"Input:  {input_file}")
     print(f"Output: {output_file}")
     print(f"Threads: 12")
     print(f"Features: Caching + Rate Limiting")
     print("="*70 + "\n")
     
-    # Load CSV
-    with open(input_file, 'r') as f:
-        reader = list(csv.reader(f))
+    # 2. Load CSV with Error Handling
+    try:
+        with open(input_file, 'r') as f:
+            reader = list(csv.reader(f))
+            if not reader:
+                print(f"ERROR: File '{input_file}' is empty.")
+                sys.exit(1)
+    except FileNotFoundError:
+        print(f"ERROR: Input file '{input_file}' not found.")
+        print(f"RECOMMENDATION: Check the file path and name.")
+        sys.exit(1)
+    except Exception as e:
+        print(f"ERROR: Failed to read file '{input_file}': {str(e)}")
+        sys.exit(1)
     
     headers = reader[0]
     rows = reader[1:]
+    
+    # 3. Validate CSV Headers
+    missing_cols = validate_csv_headers(headers)
+    if missing_cols:
+        print(f"ERROR: Input CSV missing required columns: {', '.join(missing_cols)}")
+        print(f"REQUIRED: Instance Type, Region, Operating System, Quantity(Hrs)")
+        sys.exit(1)
     
     print(f"Rows to process: {len(rows)}\n")
     
@@ -315,23 +373,30 @@ def process_csv(input_file, output_file="output.csv"):
     duration = time.time() - start_time
     
     # Build output CSV
-    new_headers = headers + ["OnDemand_Rate", "ComputeSP_Rate", "Total_OnDemand", "Total_CSP", "Savings"]
+    new_headers = headers + ["OnDemand_Rate", "ComputeSP_Rate", "Total_OnDemand", "Total_CSP", "Savings", "Error_Message"]
     output_rows = []
     
     for i, (row, result) in enumerate(zip(rows, results)):
         if result["success"]:
             output_rows.append(row + [
                 result["od_rate"], result["sp_rate"],
-                result["total_od"], result["total_sp"], result["savings"]
+                result["total_od"], result["total_sp"], result["savings"],
+                "" # Empty error message
             ])
         else:
-            output_rows.append(row + ["", "", "", "", ""])
+            # Add error details to the row
+            output_rows.append(row + ["", "", "", "", "", result["error"]])
     
     # Write output
-    with open(output_file, 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(new_headers)
-        writer.writerows(output_rows)
+    try:
+        with open(output_file, 'w', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow(new_headers)
+            writer.writerows(output_rows)
+    except Exception as e:
+        print(f"\nERROR: Failed to write to output file '{output_file}': {str(e)}")
+        print("RECOMMENDATION: Check if the file is open in another program.")
+        sys.exit(1)
     
     # Print summary
     cache_stats = cache.stats()
@@ -353,6 +418,8 @@ def process_csv(input_file, output_file="output.csv"):
     print(f"  Cache Size:     {cache_stats['size']} unique items")
     print(f"  Calls Saved:    {cache_stats['hits'] * 3} API calls")
     print(f"\n✅ Results saved to: {output_file}")
+    if metrics['errors'] > 0:
+        print(f"⚠️  {metrics['errors']} rows failed. Check 'Error_Message' column in output.")
     print(f"{'='*70}")
 
 if __name__ == "__main__":
@@ -366,4 +433,3 @@ if __name__ == "__main__":
         output_file = "output_500.csv"
     
     process_csv(input_file, output_file)
-
