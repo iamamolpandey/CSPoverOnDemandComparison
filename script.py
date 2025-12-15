@@ -17,45 +17,16 @@ from datetime import datetime
 
 AWS_REGION = "us-east-1"
 
-# Region prefix mapping for Savings Plans API
-REGION_TO_USAGE_PREFIX = {
-    "us-east-1": "USE1", "us-east-2": "USE2", "us-west-1": "USW1", "us-west-2": "USW2",
-    "ca-central-1": "CAN1", "ca-west-1": "CAN2", "sa-east-1": "SAE1", "mx-central-1": "MXC1",
-    "eu-west-1": "EU", "eu-west-2": "EU", "eu-west-3": "EU", "eu-central-1": "EU",
-    "eu-north-1": "EU", "eu-south-1": "EU", "eu-south-2": "EU", "eu-central-2": "EU",
-    "ap-south-1": "APS1", "ap-south-2": "APS2", "ap-southeast-1": "APS1", "ap-southeast-2": "APS2", 
-    "ap-southeast-3": "APS3", "ap-southeast-4": "APS4", "ap-southeast-5": "APS5", "ap-southeast-6": "APS6",
-    "ap-southeast-7": "APS7", "ap-northeast-1": "APN1", "ap-northeast-2": "APN2", "ap-northeast-3": "APN3",
-    "ap-east-1": "APE1", "ap-east-2": "APE2", "il-central-1": "ILC1", "me-south-1": "MES1", "me-central-1": "MEC1", "af-south-1": "AFS1",
-    # Local Zones (inherit parent region prefix)
-    "us-west-2-den-1a": "USW2",
-    "us-east-1-atl-1a": "USE1",
-    "us-east-1-bos-1a": "USE1",
-    "us-east-1-chi-1a": "USE1",
-    "us-east-1-dfw-1a": "USE1",
-    "us-east-1-iah-1a": "USE1",
-    "us-west-2-lax-1a": "USW2",
-    "us-east-1-mia-1a": "USE1",
-    "us-east-1-nyc-1a": "USE1"
-}
-
-# Region name to code mapping
-REGION_MAP = {
-    "Oregon": "us-west-2", "Mumbai": "ap-south-1", "Hyderabad": "ap-south-2", "Ireland": "eu-west-1",
-    "N. Virginia": "us-east-1", "Ohio": "us-east-2", "N. California": "us-west-1",
-    "Frankfurt": "eu-central-1", "London": "eu-west-2", "Paris": "eu-west-3",
-    "Stockholm": "eu-north-1", "Milan": "eu-south-1", "Spain": "eu-south-2", "Zurich": "eu-central-2",
-    "Singapore": "ap-southeast-1", "Sydney": "ap-southeast-2", "Jakarta": "ap-southeast-3",
-    "Melbourne": "ap-southeast-4", "Malaysia": "ap-southeast-5", "New Zealand": "ap-southeast-6",
-    "Thailand": "ap-southeast-7", "Tokyo": "ap-northeast-1",
-    "Seoul": "ap-northeast-2", "Osaka": "ap-northeast-3", "Hong Kong": "ap-east-1", "Taipei": "ap-east-2",
-    "Montreal": "ca-central-1", "Calgary": "ca-west-1", "São Paulo": "sa-east-1", "Bahrain": "me-south-1",
-    "UAE": "me-central-1", "Israel": "il-central-1", "Mexico": "mx-central-1", "Cape Town": "af-south-1",
-    # Local Zones
-    "Denver": "us-west-2-den-1a", "Atlanta": "us-east-1-atl-1a", "Boston": "us-east-1-bos-1a",
-    "Chicago": "us-east-1-chi-1a", "Dallas": "us-east-1-dfw-1a", "Houston": "us-east-1-iah-1a",
-    "Los Angeles": "us-west-2-lax-1a", "Miami": "us-east-1-mia-1a", "New York City": "us-east-1-nyc-1a",
-}
+# Load Region Map
+try:
+    with open('region_map.json', 'r') as f:
+        REGION_DATA = json.load(f)
+except FileNotFoundError:
+    print("ERROR: 'region_map.json' not found in current directory.")
+    sys.exit(1)
+except json.JSONDecodeError as e:
+    print(f"ERROR: Failed to parse 'region_map.json': {str(e)}")
+    sys.exit(1)
 
 # Rate limiter class
 class RateLimiter:
@@ -139,11 +110,18 @@ def validate_csv_headers(headers):
     missing = [col for col in required if col not in headers]
     return missing
 
-def normalize_region(region):
-    region_code = REGION_MAP.get(region, region)
-    if region_code and '-' in region_code and len(region_code.split('-')) > 3:
-        return '-'.join(region_code.split('-')[:3])  # Extract parent for Local Zones
-    return region_code
+def normalize_region(region_name):
+    """
+    Look up region details from REGION_DATA (loaded from region_map.json).
+    Returns (region_code, parent_region_code, usage_type_prefix)
+    """
+    region_info = REGION_DATA.get(region_name)
+    if not region_info:
+        # Fallback or error if region not found in JSON
+        # logging.warning(f"Region '{region_name}' not found in region_map.json. Using it as code.")
+        return region_name, region_name, "USE1"
+    
+    return region_info["regionCode"], region_info["parentRegionCode"], region_info["usageTypePrefix"]
 
 def normalize_os(os_name):
     os_name = os_name.strip().lower()
@@ -165,9 +143,9 @@ def normalize_os_for_sp(os_name):
         return "Red Hat Enterprise Linux"
     return "Linux/UNIX"
 
-def get_od_price(instance_type, region, os_type):
+def get_od_price(instance_type, region_code, os_type):
     """Get On-Demand price with caching and rate limiting"""
-    cache_key = cache.get_key("od", instance_type, region, os_type)
+    cache_key = cache.get_key("od", instance_type, region_code, os_type)
     cached = cache.get(cache_key)
     if cached:
         return cached
@@ -175,12 +153,13 @@ def get_od_price(instance_type, region, os_type):
     pricing_limiter.acquire()
     
     try:
-        client = boto3.client("pricing", region_name=AWS_REGION)
+        # us-east-1 is the global endpoint for Pricing Service
+        client = boto3.client("pricing", region_name="us-east-1")
         resp = client.get_products(
             ServiceCode="AmazonEC2",
             Filters=[
                 {"Field": "instanceType", "Value": instance_type, "Type": "TERM_MATCH"},
-                {"Field": "regionCode", "Value": region, "Type": "TERM_MATCH"},
+                {"Field": "regionCode", "Value": region_code, "Type": "TERM_MATCH"},
                 {"Field": "tenancy", "Value": "Shared", "Type": "TERM_MATCH"},
                 {"Field": "operatingSystem", "Value": os_type, "Type": "TERM_MATCH"},
                 {"Field": "preInstalledSw", "Value": "NA", "Type": "TERM_MATCH"},
@@ -189,7 +168,7 @@ def get_od_price(instance_type, region, os_type):
         )
         
         if not resp["PriceList"]:
-            raise ValueError(f"No price found for {instance_type} in {region}")
+            raise ValueError(f"No price found for {instance_type} in {region_code}")
         
         item = json.loads(resp["PriceList"][0])
         term = list(item["terms"]["OnDemand"].values())[0]
@@ -204,23 +183,24 @@ def get_od_price(instance_type, region, os_type):
             log_metric("throttles")
         raise
 
-def get_sp_rate(region, instance_type, os_type):
+def get_sp_rate(parent_region_code, usage_type_prefix, instance_type, os_type, region_code):
     """Get Savings Plans rate with caching and rate limiting"""
-    cache_key = cache.get_key("sp", instance_type, region, os_type)
+    cache_key = cache.get_key("sp", instance_type, parent_region_code, usage_type_prefix, os_type)
     cached = cache.get(cache_key)
     if cached:
         return cached
     
-    region_prefix = REGION_TO_USAGE_PREFIX.get(region, "USE1")
-    if region_prefix == "USE1":
+    # If region is us-east-1, don't use prefix
+    if region_code == "us-east-1":
         usage_type = f"BoxUsage:{instance_type}"
     else:
-        usage_type = f"{region_prefix}-BoxUsage:{instance_type}"
+        usage_type = f"{usage_type_prefix}-BoxUsage:{instance_type}"
     
     sp_limiter.acquire()
     
     try:
-        client = boto3.client('savingsplans', region_name=region)
+        # Make API call to the PARENT region
+        client = boto3.client('savingsplans', region_name=parent_region_code)
         
         # Get offering ID
         resp1 = client.describe_savings_plans_offerings(
@@ -252,7 +232,7 @@ def get_sp_rate(region, instance_type, os_type):
         
         rates = resp2.get('searchResults', [])
         if not rates:
-            raise ValueError(f"No SP rates for {instance_type} in {region}")
+            raise ValueError(f"No SP rates for {instance_type} in {parent_region_code} (UsageType: {usage_type})")
         
         rate = float(rates[0]['rate'])
         cache.set(cache_key, rate)
@@ -272,12 +252,12 @@ def process_row(row_data, row_idx):
         os_raw = row_data["Operating System"]
         hours = float(row_data["Quantity(Hrs)"])
         
-        region = normalize_region(region_display)
+        region_code, parent_region, usage_prefix = normalize_region(region_display)
         os_type = normalize_os(os_raw)
         os_type_sp = normalize_os_for_sp(os_raw)
         
-        od_rate = get_od_price(instance_type, region, os_type)
-        sp_rate = get_sp_rate(region, instance_type, os_type_sp)
+        od_rate = get_od_price(instance_type, region_code, os_type)
+        sp_rate = get_sp_rate(parent_region, usage_prefix, instance_type, os_type_sp, region_code)
         
         total_od = round(od_rate * hours, 4)
         total_sp = round(sp_rate * hours, 4)
@@ -301,7 +281,7 @@ def process_row(row_data, row_idx):
 def process_csv(input_file, output_file="output.csv"):
     """Main processing function with multithreading"""
     print("="*70)
-    print("AWS SAVINGS PLANS CALCULATOR v1.2")
+    print("AWS SAVINGS PLANS CALCULATOR v1.1")
     print("="*70)
     
     # 1. Validate AWS Credentials
@@ -419,7 +399,7 @@ def process_csv(input_file, output_file="output.csv"):
     print(f"  Calls Saved:    {cache_stats['hits'] * 3} API calls")
     print(f"\n✅ Results saved to: {output_file}")
     if metrics['errors'] > 0:
-        print(f"⚠️  {metrics['errors']} rows failed. Check 'Error_Message' column in output.")
+        print(f"⚠️  {metrics['errors']} rows failed. Check 'Error_Message' column in output. [It Might Possible due to 'Total' Row]")
     print(f"{'='*70}")
 
 if __name__ == "__main__":
@@ -429,7 +409,9 @@ if __name__ == "__main__":
         input_file = sys.argv[1]
         output_file = sys.argv[2] if len(sys.argv) > 2 else "output.csv"
     else:
-        input_file = "test_500.csv"
-        output_file = "output_500.csv"
+        print('-'*70)
+        print("Please Provide CSV File Name: ```python script.py <input_file> <output_file[OPTIONAL]>```")
+        print('-'*70)
+        sys.exit(1)
     
     process_csv(input_file, output_file)
