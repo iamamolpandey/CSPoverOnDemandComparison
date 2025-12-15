@@ -1,0 +1,440 @@
+{
+    "Mexico": {
+        "usageTypePrefix": "MXC1",
+        "parentRegionCode": "mx-central-1",
+        "regionCode": "mx-central-1",
+        "regionName": "Mexico (Central)"
+    },
+    "N. Virginia": {
+        "usageTypePrefix": "USE1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1",
+        "regionName": "US East (N. Virginia)"
+    },
+    "Honolulu": {
+        "usageTypePrefix": "HNL1",
+        "parentRegionCode": "us-west-2",
+        "regionCode": "us-west-2-hnl-1",
+        "regionName": "US West (Honolulu)"
+    },
+    "Atlanta": {
+        "usageTypePrefix": "ATL1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-atl-1",
+        "regionName": "US East (Atlanta)"
+    },
+    "Houston": {
+        "usageTypePrefix": "IAH1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-iah-1",
+        "regionName": "US East (Houston)"
+    },
+    "Kansas City 2": {
+        "usageTypePrefix": "MCI2",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-mci-1",
+        "regionName": "US East (Kansas City 2)"
+    },
+    "Kansas City": {
+        "usageTypePrefix": "MCI2",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-mci-1",
+        "regionName": "US East (Kansas City)"
+    },
+    "Buenos Aires": {
+        "usageTypePrefix": "BUE1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-bue-1",
+        "regionName": "Argentina (Buenos Aires)"
+    },
+    "Israel (Tel Aviv)": {
+        "usageTypePrefix": "ILC1",
+        "parentRegionCode": "il-central-1",
+        "regionCode": "il-central-1",
+        "regionName": "Israel (Tel Aviv)"
+    },
+    "Tel Aviv": {
+        "usageTypePrefix": "ILC1",
+        "parentRegionCode": "il-central-1",
+        "regionCode": "il-central-1",
+        "regionName": "Israel (Tel Aviv)"
+    },
+    "Miami": {
+        "usageTypePrefix": "MIA1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-mia-1",
+        "regionName": "US East (Miami)"
+    },
+    "Oregon": {
+        "usageTypePrefix": "USW2",
+        "parentRegionCode": "us-west-2",
+        "regionCode": "us-west-2",
+        "regionName": "US West (Oregon)"
+    },
+    "Hong Kong": {
+        "usageTypePrefix": "APE1",
+        "parentRegionCode": "ap-east-1",
+        "regionCode": "ap-east-1",
+        "regionName": "Asia Pacific (Hong Kong)"
+    },
+    "Lagos": {
+        "usageTypePrefix": "LOS1",
+        "parentRegionCode": "af-south-1",
+        "regionCode": "af-south-1-los-1",
+        "regionName": "Nigeria (Lagos)"
+    },
+    "Las Vegas": {
+        "usageTypePrefix": "LAS1",
+        "parentRegionCode": "us-west-2",
+        "regionCode": "us-west-2-las-1",
+        "regionName": "US West (Las Vegas)"
+    },
+    "Cape Town": {
+        "usageTypePrefix": "AFS1",
+        "parentRegionCode": "af-south-1",
+        "regionCode": "af-south-1",
+        "regionName": "Africa (Cape Town)"
+    },
+    "Frankfurt": {
+        "usageTypePrefix": "EUC1",
+        "parentRegionCode": "eu-central-1",
+        "regionCode": "eu-central-1",
+        "regionName": "EU (Frankfurt)"
+    },
+    "Paris": {
+        "usageTypePrefix": "EUW3",
+        "parentRegionCode": "eu-west-3",
+        "regionCode": "eu-west-3",
+        "regionName": "EU (Paris)"
+    },
+    "Warsaw": {
+        "usageTypePrefix": "WAW1",
+        "parentRegionCode": "eu-central-1",
+        "regionCode": "eu-central-1-waw-1",
+        "regionName": "Poland (Warsaw)"
+    },
+    "Bahrain": {
+        "usageTypePrefix": "MES1",
+        "parentRegionCode": "me-south-1",
+        "regionCode": "me-south-1",
+        "regionName": "Middle East (Bahrain)"
+    },
+    "N. California": {
+        "usageTypePrefix": "USW1",
+        "parentRegionCode": "us-west-1",
+        "regionCode": "us-west-1",
+        "regionName": "US West (N. California)"
+    },
+    "Boston": {
+        "usageTypePrefix": "BOS1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-bos-1",
+        "regionName": "US East (Boston)"
+    },
+    "Manila": {
+        "usageTypePrefix": "MNL1",
+        "parentRegionCode": "ap-southeast-1",
+        "regionCode": "ap-southeast-1-mnl-1",
+        "regionName": "Philippines (Manila)"
+    },
+    "Singapore": {
+        "usageTypePrefix": "APS1",
+        "parentRegionCode": "ap-southeast-1",
+        "regionCode": "ap-southeast-1",
+        "regionName": "Asia Pacific (Singapore)"
+    },
+    "New Zealand": {
+        "usageTypePrefix": "APS8",
+        "parentRegionCode": "ap-southeast-6",
+        "regionCode": "ap-southeast-6",
+        "regionName": "Asia Pacific (New Zealand)"
+    },
+    "Thailand": {
+        "usageTypePrefix": "APS9",
+        "parentRegionCode": "ap-southeast-7",
+        "regionCode": "ap-southeast-7",
+        "regionName": "Asia Pacific (Thailand)"
+    },
+    "Melbourne": {
+        "usageTypePrefix": "APS6",
+        "parentRegionCode": "ap-southeast-4",
+        "regionCode": "ap-southeast-4",
+        "regionName": "Asia Pacific (Melbourne)"
+    },
+    "Chicago": {
+        "usageTypePrefix": "CHI1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-chi-1",
+        "regionName": "US East (Chicago)"
+    },
+    "Jakarta": {
+        "usageTypePrefix": "APS4",
+        "parentRegionCode": "ap-southeast-3",
+        "regionCode": "ap-southeast-3",
+        "regionName": "Asia Pacific (Jakarta)"
+    },
+    "US-East": {
+        "usageTypePrefix": "UGE1",
+        "parentRegionCode": "us-gov-east",
+        "regionCode": "us-gov-east-1",
+        "regionName": "AWS GovCloud (US-East)"
+    },
+    "UAE": {
+        "usageTypePrefix": "MEC1",
+        "parentRegionCode": "me-central-1",
+        "regionCode": "me-central-1",
+        "regionName": "Middle East (UAE)"
+    },
+    "Milan": {
+        "usageTypePrefix": "EUS1",
+        "parentRegionCode": "eu-south-1",
+        "regionCode": "eu-south-1",
+        "regionName": "EU (Milan)"
+    },
+    "Santiago": {
+        "usageTypePrefix": "SCL1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-scl-1",
+        "regionName": "Chile (Santiago)"
+    },
+    "Perth": {
+        "usageTypePrefix": "PER1",
+        "parentRegionCode": "ap-southeast-2",
+        "regionCode": "ap-southeast-2-per-1",
+        "regionName": "Australia (Perth)"
+    },
+    "Hamburg": {
+        "usageTypePrefix": "HAM1",
+        "parentRegionCode": "eu-central-1",
+        "regionCode": "eu-central-1-ham-1",
+        "regionName": "Germany (Hamburg)"
+    },
+    "Stockholm": {
+        "usageTypePrefix": "EUN1",
+        "parentRegionCode": "eu-north-1",
+        "regionCode": "eu-north-1",
+        "regionName": "EU (Stockholm)"
+    },
+    "Ohio": {
+        "usageTypePrefix": "USE2",
+        "parentRegionCode": "us-east-2",
+        "regionCode": "us-east-2",
+        "regionName": "US East (Ohio)"
+    },
+    "London": {
+        "usageTypePrefix": "EUW2",
+        "parentRegionCode": "eu-west-2",
+        "regionCode": "eu-west-2",
+        "regionName": "EU (London)"
+    },
+    "Spain": {
+        "usageTypePrefix": "EUS2",
+        "parentRegionCode": "eu-south-2",
+        "regionCode": "eu-south-2",
+        "regionName": "Europe (Spain)"
+    },
+    "Philadelphia": {
+        "usageTypePrefix": "PHL1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-phl-1",
+        "regionName": "US East (Philadelphia)"
+    },
+    "Zurich": {
+        "usageTypePrefix": "EUC2",
+        "parentRegionCode": "eu-central-2",
+        "regionCode": "eu-central-2",
+        "regionName": "Europe (Zurich)"
+    },
+    "New York City": {
+        "usageTypePrefix": "NYC1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-nyc-1",
+        "regionName": "US East (New York City)"
+    },
+    "Seoul": {
+        "usageTypePrefix": "APN2",
+        "parentRegionCode": "ap-northeast-2",
+        "regionCode": "ap-northeast-2",
+        "regionName": "Asia Pacific (Seoul)"
+    },
+    "Los Angeles": {
+        "usageTypePrefix": "LAX1",
+        "parentRegionCode": "us-west-2",
+        "regionCode": "us-west-2-lax-1",
+        "regionName": "US West (Los Angeles)"
+    },
+    "Mumbai": {
+        "usageTypePrefix": "APS3",
+        "parentRegionCode": "ap-south-1",
+        "regionCode": "ap-south-1",
+        "regionName": "Asia Pacific (Mumbai)"
+    },
+    "Calgary": {
+        "usageTypePrefix": "CAN2",
+        "parentRegionCode": "ca-west-1",
+        "regionCode": "ca-west-1",
+        "regionName": "Canada West (Calgary)"
+    },
+    "Delhi": {
+        "usageTypePrefix": "DEL1",
+        "parentRegionCode": "ap-south-1",
+        "regionCode": "ap-south-1-del-1",
+        "regionName": "India (Delhi)"
+    },
+    "Taipei": {
+        "usageTypePrefix": "APE2",
+        "parentRegionCode": "ap-east-2",
+        "regionCode": "ap-east-2",
+        "regionName": "Asia Pacific (Taipei)"
+    },
+    "Queretaro": {
+        "usageTypePrefix": "QRO1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-qro-1",
+        "regionName": "Mexico (Queretaro)"
+    },
+    "Hyderabad": {
+        "usageTypePrefix": "APS5",
+        "parentRegionCode": "ap-south-2",
+        "regionCode": "ap-south-2",
+        "regionName": "Asia Pacific (Hyderabad)"
+    },
+    "Tokyo": {
+        "usageTypePrefix": "APN1",
+        "parentRegionCode": "ap-northeast-1",
+        "regionCode": "ap-northeast-1",
+        "regionName": "Asia Pacific (Tokyo)"
+    },
+    "US-West": {
+        "usageTypePrefix": "UGW1",
+        "parentRegionCode": "us-gov-west",
+        "regionCode": "us-gov-west-1",
+        "regionName": "AWS GovCloud (US-West)"
+    },
+    "Asia Pacific (Malaysia)": {
+        "usageTypePrefix": "APS7",
+        "parentRegionCode": "ap-southeast-5",
+        "regionCode": "ap-southeast-5",
+        "regionName": "Asia Pacific (Malaysia)"
+    },
+    "Malaysia": {
+        "usageTypePrefix": "APS7",
+        "parentRegionCode": "ap-southeast-5",
+        "regionCode": "ap-southeast-5",
+        "regionName": "Asia Pacific (Malaysia)"
+    },
+    "Dallas": {
+        "usageTypePrefix": "DFW1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-dfw-1",
+        "regionName": "US East (Dallas)"
+    },
+    "Phoenix": {
+        "usageTypePrefix": "PHX1",
+        "parentRegionCode": "us-west-2",
+        "regionCode": "us-west-2-phx-1",
+        "regionName": "US West (Phoenix)"
+    },
+    "Ireland": {
+        "usageTypePrefix": "EU",
+        "parentRegionCode": "eu-west-1",
+        "regionCode": "eu-west-1",
+        "regionName": "EU (Ireland)"
+    },
+    "Osaka": {
+        "usageTypePrefix": "APN3",
+        "parentRegionCode": "ap-northeast-3",
+        "regionCode": "ap-northeast-3",
+        "regionName": "Asia Pacific (Osaka)"
+    },
+    "Portland": {
+        "usageTypePrefix": "PDX1",
+        "parentRegionCode": "us-west-2",
+        "regionCode": "us-west-2-pdx-1",
+        "regionName": "US West (Portland)"
+    },
+    "Helsinki": {
+        "usageTypePrefix": "HEL1",
+        "parentRegionCode": "eu-north-1",
+        "regionCode": "eu-north-1-hel-1",
+        "regionName": "Finland (Helsinki)"
+    },
+    "Minneapolis": {
+        "usageTypePrefix": "MSP1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-msp-1",
+        "regionName": "US East (Minneapolis)"
+    },
+    "Sao Paulo": {
+        "usageTypePrefix": "SAE1",
+        "parentRegionCode": "sa-east-1",
+        "regionCode": "sa-east-1",
+        "regionName": "South America (Sao Paulo)"
+    },
+    "Denver": {
+        "usageTypePrefix": "DEN1",
+        "parentRegionCode": "us-west-2",
+        "regionCode": "us-west-2-den-1",
+        "regionName": "US West (Denver)"
+    },
+    "Sydney": {
+        "usageTypePrefix": "APS2",
+        "parentRegionCode": "ap-southeast-2",
+        "regionCode": "ap-southeast-2",
+        "regionName": "Asia Pacific (Sydney)"
+    },
+    "Kolkata": {
+        "usageTypePrefix": "CCU1",
+        "parentRegionCode": "ap-south-1",
+        "regionCode": "ap-south-1-ccu-1",
+        "regionName": "India (Kolkata)"
+    },
+    "Muscat": {
+        "usageTypePrefix": "MCT1",
+        "parentRegionCode": "me-south-1",
+        "regionCode": "me-south-1-mct-1",
+        "regionName": "Oman (Muscat)"
+    },
+    "Canada": {
+        "usageTypePrefix": "CAN1",
+        "parentRegionCode": "ca-central-1",
+        "regionCode": "ca-central-1",
+        "regionName": "Canada (Central)"
+    },
+    "Central": {
+        "usageTypePrefix": "CAN1",
+        "parentRegionCode": "ca-central-1",
+        "regionCode": "ca-central-1",
+        "regionName": "Canada (Central)"
+    },
+    "Lima": {
+        "usageTypePrefix": "LIM1",
+        "parentRegionCode": "us-east-1",
+        "regionCode": "us-east-1-lim-1",
+        "regionName": "Peru (Lima)"
+    },
+    "Bangkok": {
+        "usageTypePrefix": "BKK1",
+        "parentRegionCode": "ap-southeast-1",
+        "regionCode": "ap-southeast-1-bkk-1",
+        "regionName": "Thailand (Bangkok)"
+    },
+    "Copenhagen": {
+        "usageTypePrefix": "CPH1",
+        "parentRegionCode": "eu-north-1",
+        "regionCode": "eu-north-1-cph-1",
+        "regionName": "Denmark (Copenhagen)"
+    },
+    "Auckland": {
+        "usageTypePrefix": "AKL1",
+        "parentRegionCode": "ap-southeast-2",
+        "regionCode": "ap-southeast-2-akl-1",
+        "regionName": "New Zealand (Auckland)"
+    },
+    "Seattle": {
+        "usageTypePrefix": "SEA1",
+        "parentRegionCode": "us-west-2",
+        "regionCode": "us-west-2-sea-1",
+        "regionName": "US West (Seattle)"
+    }
+}
